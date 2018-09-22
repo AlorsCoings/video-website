@@ -1,0 +1,221 @@
+---
+swagger: "2.0"
+info:
+  description: "Api for Video Website a familial application to watch video."
+  version: "1.0.0"
+  title: "Video Website"
+host: "localhost:8080"
+basePath: "/api"
+tags:
+- name: "monitoring"
+  description: "Everything about your monitoring videos"
+- name: "video"
+  description: "Video database management"
+schemes:
+- "http"
+paths:
+  /video:
+    get:
+      tags:
+      - "video"
+      summary: "Finds all Videos"
+      description: ""
+      operationId: "get_all_videos"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Video"
+        400:
+          description: "Invalid status value"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.video_controller"
+    post:
+      tags:
+      - "video"
+      summary: "Add a new video to the store"
+      description: ""
+      operationId: "add_video"
+      parameters:
+      - name: "url"
+        in: "query"
+        description: "Youtube url of a video to be added to the database"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.video_controller"
+    put:
+      tags:
+      - "video"
+      summary: "Mark an existing video as watched"
+      description: ""
+      operationId: "update_video_watched"
+      parameters: []
+      responses:
+        400:
+          description: "Invalid video name supplied"
+        404:
+          description: "Video not found"
+        405:
+          description: "Validation exception"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.video_controller"
+  /add_video_to_playlist:
+    post:
+      tags:
+      - "monitoring"
+      summary: "Add a video to the playlist"
+      description: ""
+      operationId: "add_video_to_playlist"
+      parameters:
+      - name: "video_name"
+        in: "query"
+        description: "Name of the video to be added to the playlist"
+        required: true
+        type: "string"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.monitoring_controller"
+  /get_playlist:
+    get:
+      tags:
+      - "monitoring"
+      summary: "Finds playlist"
+      description: ""
+      operationId: "get_playlist"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Video"
+        400:
+          description: "Invalid status value"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.monitoring_controller"
+  /delete-playlist:
+    delete:
+      tags:
+      - "monitoring"
+      summary: "Delete the playlist"
+      description: ""
+      operationId: "delete_playlist"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "video_name"
+        in: "query"
+        description: "Video name to remove from playlist"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid name value"
+        404:
+          description: "Video not found"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.monitoring_controller"
+  /video/findByAge:
+    get:
+      tags:
+      - "video"
+      summary: "Finds Videos by age"
+      description: "Multiple age values can be provided with comma separated strings"
+      operationId: "find_videos_by_age"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "age"
+        in: "query"
+        description: "Age values that need to be considered for filter"
+        required: true
+        type: "number"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Video"
+        400:
+          description: "Invalid age value"
+      security:
+      - video_auth:
+        - "write:videos"
+        - "read:videos"
+      x-swagger-router-controller: "swagger_server.controllers.video_controller"
+securityDefinitions:
+  video_auth:
+    type: "oauth2"
+    authorizationUrl: "http://localhost:8000/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:videos: "modify videos in your account"
+      read:videos: "read your videos"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Video:
+    type: "object"
+    required:
+    - "name"
+    - "photoUrls"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      photoUrls:
+        type: "array"
+        xml:
+          name: "photoUrl"
+          wrapped: true
+        items:
+          type: "string"
+      age:
+        type: "number"
+        description: "age minimum to watch the video"
+    example:
+      photoUrls:
+      - "photoUrls"
+      - "photoUrls"
+      name: "name"
+      id: 0
+      age: 6.02745618307040320615897144307382404804229736328125
+    xml:
+      name: "Video"

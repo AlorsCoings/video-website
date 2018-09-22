@@ -1,0 +1,256 @@
+{
+    "basePath": "/semantic-tools",
+    "definitions": {},
+    "host": "semantic-tools.checksem.fr",
+    "info": {
+        "description": "Semantic tools by Checksem.",
+        "title": "Semantic Tools",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/definition": {
+            "get": {
+                "description": "",
+                "operationId": "definition",
+                "parameters": [{
+                    "default": "chat",
+                    "description": "The word to be translated",
+                    "in": "query",
+                    "name": "word",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "default": "fran\u00e7ais",
+                    "description": "The language the word is going to be translated into",
+                    "enum": ["fran\u00e7ais", "english", "portugu\u00eas", "\u6f22\u8a9e", "\u6c49\u8bed", "\u4e2d\u6587"],
+                    "in": "query",
+                    "name": "language",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": ["text/plain; charset=utf-8"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "204": {
+                        "description": "Successful operation, but no content found"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "summary": "Provide the definition of a word in a language.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/extract-keywords-from-pdf": {
+            "post": {
+                "consumes": ["multipart/form-data"],
+                "description": "The result is a list of word with a value corresponding to their importance.",
+                "operationId": "extract_keywords_from_pdf",
+                "parameters": [{
+                    "description": "The pdf from which the keywords are going to be extracted",
+                    "in": "formData",
+                    "name": "pdf_file",
+                    "required": true,
+                    "type": "file"
+                }, {
+                    "default": "pdftotext",
+                    "description": "The method to use to extract text from pdf. 'pdftotext' is quick, 'tesseract' might handle images",
+                    "enum": ["pdftotext", "tesseract"],
+                    "in": "query",
+                    "name": "method",
+                    "required": false,
+                    "type": "string"
+                }],
+                "produces": ["application/xml", "application/json"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "204": {
+                        "description": "Successful operation, but no content found"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "summary": "Extract the keywords from a pdf.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/extract-keywords-from-text": {
+            "get": {
+                "description": "The result is a list of word with a value corresponding to their importance.",
+                "operationId": "extract_keywords_from_text",
+                "parameters": [{
+                    "default": "Le chat monte sur un arbre.",
+                    "description": "The text from which the keywords are going to be extracted",
+                    "in": "query",
+                    "name": "text",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": ["application/xml", "application/json"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "204": {
+                        "description": "Successful operation, but no content found"
+                    }
+                },
+                "summary": "Extract the keywords from a text.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/languages": {
+            "get": {
+                "description": "",
+                "operationId": "languages_available",
+                "parameters": [],
+                "produces": ["application/xml", "application/json"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "Get all languages available",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/lemmatize": {
+            "get": {
+                "description": "",
+                "operationId": "lemmatize",
+                "parameters": [{
+                    "default": "Le chat monte sur un arbre.",
+                    "description": "The text to be lemmatized",
+                    "in": "query",
+                    "name": "text",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": ["application/xml", "application/json"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "204": {
+                        "description": "Successful operation, but no content found"
+                    }
+                },
+                "summary": "Lemmatize a text.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/similarity-distance": {
+            "get": {
+                "description": "The result is between 0 and 1 (1 meaning very similar).",
+                "operationId": "semantic_distance",
+                "parameters": [{
+                    "default": "roi",
+                    "description": "First text",
+                    "in": "query",
+                    "name": "text1",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "default": "reine",
+                    "description": "Second text",
+                    "in": "query",
+                    "name": "text2",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": ["application/xml", "application/json"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "summary": "Calculate the similarity distance between two texts.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        },
+        "/translate": {
+            "get": {
+                "description": "",
+                "operationId": "translate",
+                "parameters": [{
+                    "default": "chat",
+                    "description": "The word to be translated",
+                    "in": "query",
+                    "name": "word",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "default": "fran\u00e7ais",
+                    "description": "The language of the word",
+                    "enum": ["fran\u00e7ais", "english", "portugu\u00eas", "\u6f22\u8a9e", "\u6c49\u8bed", "\u4e2d\u6587"],
+                    "in": "query",
+                    "name": "origin_language",
+                    "required": true,
+                    "type": "string"
+                }, {
+                    "default": "english",
+                    "description": "The language the word is going to be translated into",
+                    "enum": ["fran\u00e7ais", "english", "portugu\u00eas", "\u6f22\u8a9e", "\u6c49\u8bed", "\u4e2d\u6587"],
+                    "in": "query",
+                    "name": "destination_language",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": ["text/plain; charset=utf-8"],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "204": {
+                        "description": "Successful operation, but no content found"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                },
+                "summary": "Translate a word in another language.",
+                "tags": ["SemanticTools"],
+                "x-swagger-router-controller": "swagger_server.controllers.semantic_tools_controller"
+            }
+        }
+    },
+    "schemes": ["http"],
+    "swagger": "2.0",
+    "tags": [{
+        "description": "Everything about semantic tools",
+        "name": "SemanticTools"
+    }]
+}
